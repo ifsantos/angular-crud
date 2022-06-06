@@ -1,0 +1,23 @@
+<mat-card>
+    <mat-toolbar color="primary">Detalhes do curso</mat-toolbar>
+
+    <mat-card-content >
+        <form [formGroup]="form">
+            <mat-form-field appearance="legacy" class="full-width">
+                <input matInput placeholder="Nome" formControlName="name">
+                <!-- <mat-icon matSuffix>sentiment_very_satisfied</mat-icon> -->
+                <!-- <mat-hint>Nome do curso</mat-hint> -->
+            </mat-form-field>
+
+            <mat-form-field appearance="legacy" class="full-width">
+                <input matInput placeholder="Categoria" formControlName="category">
+                <mat-hint>Categoria do curso</mat-hint>
+            </mat-form-field>
+        </form>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="onSubmit()">Salvar</button>
+        <button mat-raised-button (click)="onCancel()">Cancelar</button>
+    </mat-card-actions>
+
+</mat-card>
