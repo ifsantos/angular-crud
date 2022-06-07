@@ -37,13 +37,13 @@
         </button>
       </mat-header-cell>
 
-      <mat-cell *matCellDef="let course">
+      <mat-cell *matCellDef="let element">
         <button mat-icon-button color="primary" aria-label="Editar curso">
-          <mat-icon>edit</mat-icon>
+          <mat-icon (click)="onEdit(element)">edit</mat-icon>
         </button>
 
         <button mat-icon-button color="warn" aria-label="Remover curso">
-          <mat-icon>delete</mat-icon>
+          <mat-icon (click)="onDelete(element)">delete</mat-icon>
         </button>
       </mat-cell>
 

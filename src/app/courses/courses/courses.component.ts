@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, Observable, of, tap } from 'rxjs';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
@@ -23,10 +24,15 @@ export class CoursesComponent implements OnInit {
     private coursesService: CoursesService,
     public dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
 
     ) {
-    this.courses$ = this.coursesService.list().pipe(
+    this.courses$ = this.loadCourses();
+  }
+
+  loadCourses(){
+    return  this.coursesService.list().pipe(
       catchError(error => {
         this.openDialog('Erro ao carregar cursos')
         return of([])
@@ -45,5 +51,22 @@ export class CoursesComponent implements OnInit {
 
   onAdd() {
     this.router.navigate(['new'], {relativeTo:this.route});
+  }
+  onEdit(element: Course) {
+    this.openDialog(JSON.stringify(element));
+    
+  }
+  onDelete(element: Course) {
+    this.coursesService.delete(element)
+    .subscribe({
+      complete: () => {
+        this.snackBar.open('Deletado com sucesso','',{duration:3000});
+        this.courses$ = this.loadCourses();
+        // this.router.navigate(['courses']).then(() => {
+        //   window.location.reload();
+        // });
+      }, 
+      error: () => { this.snackBar.open('Erro ao Deletar', '', {duration:3000}); }
+    });
   }
 }
