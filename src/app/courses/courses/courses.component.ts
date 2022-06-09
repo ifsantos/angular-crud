@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/components/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
-import { CoursesRoutingModule } from '../courses-routing.module';
 import { Course } from '../model/course';
 import { CoursesService } from '../services/courses.service';
 
@@ -53,20 +53,36 @@ export class CoursesComponent implements OnInit {
     this.router.navigate(['new'], {relativeTo:this.route});
   }
   onEdit(element: Course) {
-    this.openDialog(JSON.stringify(element));
+    // this.openDialog(JSON.stringify(element));
+    this.router.navigate(['new'], {relativeTo:this.route, state: element});
+
     
   }
   onDelete(element: Course) {
-    this.coursesService.delete(element)
-    .subscribe({
-      complete: () => {
-        this.snackBar.open('Deletado com sucesso','',{duration:3000});
-        this.courses$ = this.loadCourses();
-        // this.router.navigate(['courses']).then(() => {
-        //   window.location.reload();
-        // });
-      }, 
-      error: () => { this.snackBar.open('Erro ao Deletar', '', {duration:3000}); }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data:{
+        message: `Deseja realmente deletar o seguinte curso?`,
+        record: `[${element._id}] ${element.name}`
+      } 
     });
+    
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+
+      if (result === true){
+        this.coursesService.delete(element)
+        .subscribe({
+          complete: () => {
+            this.snackBar.open('Deletado com sucesso','',{duration:3000});
+            this.courses$ = this.loadCourses();
+            // this.router.navigate(['courses']).then(() => {
+            //   window.location.reload();
+            // });
+          }, 
+          error: () => { this.snackBar.open('Erro ao Deletar', '', {duration:3000}); }
+        });
+      }
+    });
+
   }
 }
